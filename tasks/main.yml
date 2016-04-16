@@ -3,18 +3,23 @@
   file: "path={{ www_root }}/{{ item.key }}/backup state=directory owner={{ admin_user }} group=sudo mode=0700 recurse=yes"
   with_dict: "{{ wordpress_sites }}"
 
+  # Define the purge jobs to prevent backups from filling the server over time.
+  
+  # Purge uploads backups
 - name: Create uploads purge job
-  cron: name="Purge old uploads backups" minute="0" hour="1"
+  cron: name="Purge old uploads backups" minute="0" hour="1"    # At 1am every day
         cron_file=purge
         user="{{ admin_user }}" job="duply /etc/duply/{{ item.key }}_uploads purge"
   with_dict: "{{ wordpress_sites }}"
   
+  # Purge database backups
 - name: Create database purge job
-  cron: name="Purge old database backups" minute="0" hour="2"
+  cron: name="Purge old database backups" minute="0" hour="2"   # At 2am every day
         cron_file=purge
         user="{{ admin_user }}" job="duply /etc/duply/{{ item.key }}_database purge"  
   with_dict: "{{ wordpress_sites }}"
   
+  # Set up variables used by Stouts.backup to create backup jobs.
 - name: Create backup jobs
   set_fact:
     backup_user: "{{ admin_user }}"
@@ -26,13 +31,16 @@
     backup_mysql_user: "{{ mysql_root_user }}"
     backup_mysql_pass: "{{ mysql_root_password }}"
     
-    backup_full_max_age: 1D
-    
+    # Backups are kept for 1 month by default. See Stouts.backup documentation to change this window.
+    # Make only full backups, not incremental.
+    backup_full_max_age: 8h          # Don't make a new full backup until the latest backup is at least this old. This is a safety check in case the backup runs repeatedly.
+
+    # Define the backup jobs
     backup_profiles:
     
-    #Backup uploads
-      - name: "{{ item.key }}_uploads"            # Required params
-        schedule: 0 3 * * *                       # At 3am every day
+    # Backup uploads
+      - name: "{{ item.key }}_uploads"
+        schedule: 0 3 * * *                                             # At 3am every day
         source: "{{ www_root }}/{{ item.key }}/shared/uploads"
         target: "file://{{ www_root }}/{{ item.key }}/backup/uploads"
         
