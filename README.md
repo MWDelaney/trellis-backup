@@ -5,12 +5,12 @@ Role to set up [Stouts.backup](https://github.com/Stouts/Stouts.backup) jobs for
 From your project directory
 
 1) Clone this repository
-````sh
+````{r, engine='bash', count_lines}
 git clone --depth=1 git@github.com:MWDelaney/trellis-backup.git trellis/roles/backup
 ````
 
 2) Clone Stouts.backup
-````sh
+````{r, engine='bash', count_lines}
 git clone --depth=1 git@github.com:Stouts/Stouts.backup.git trellis/roles/Stouts.backup
 ````
 
@@ -24,6 +24,6 @@ git clone --depth=1 git@github.com:Stouts/Stouts.backup.git trellis/roles/Stouts
 ````
 
 4) Reprovision your server to add backup tasks:
-````sh
+````{r, engine='bash', count_lines}
 ansible-playbook server.yml -e env=production
 ````
