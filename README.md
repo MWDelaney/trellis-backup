@@ -1,5 +1,5 @@
 # trellis-backup
-Role to set up Stouts.backup jobs for Roots/Trellis sites
+Role to set up [Stouts.backup](https://github.com/Stouts/Stouts.backup) jobs for [Roots/Trellis](https://roots.io/trellis/) sites
 
 ## Usage
 From your project directory
