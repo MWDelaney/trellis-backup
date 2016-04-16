@@ -1,0 +1,44 @@
+---
+- name: Create backup directory
+  file: "path={{ www_root }}/{{ item.key }}/backup state=directory owner={{ admin_user }} group=sudo mode=0700 recurse=yes"
+  with_dict: "{{ wordpress_sites }}"
+
+- name: Create uploads purge job
+  cron: name="Purge old uploads backups" minute="0" hour="1"
+        cron_file=purge
+        user="{{ admin_user }}" job="duply /etc/duply/{{ item.key }}_uploads purge"
+  with_dict: "{{ wordpress_sites }}"
+  
+- name: Create database purge job
+  cron: name="Purge old database backups" minute="0" hour="2"
+        cron_file=purge
+        user="{{ admin_user }}" job="duply /etc/duply/{{ item.key }}_database purge"  
+  with_dict: "{{ wordpress_sites }}"
+  
+- name: Create backup jobs
+  set_fact:
+    backup_user: "{{ admin_user }}"
+    backup_group: sudo
+    
+    backup_target_user: "{{ admin_user }}"
+    backup_target_pass: "{{ vault_sudoer_passwords.admin }}"
+
+    backup_mysql_user: "{{ mysql_root_user }}"
+    backup_mysql_pass: "{{ mysql_root_password }}"
+    
+    backup_full_max_age: 1D
+    
+    backup_profiles:
+    
+    #Backup uploads
+      - name: "{{ item.key }}_uploads"            # Required params
+        schedule: 0 3 * * *                       # At 3am every day
+        source: "{{ www_root }}/{{ item.key }}/shared/uploads"
+        target: "file://{{ www_root }}/{{ item.key }}/backup/uploads"
+        
+    # Backup database
+      - name: "{{ item.key }}_database"
+        schedule: 0 4 * * *                                              # At 4am every day
+        source: "mysql://{{ item.key | underscore }}_{{ env }}"          # Backup prefixes: postgresql://, maysql://, mongo://
+        target: "file://{{ www_root }}/{{ item.key }}/backup/database"
+  with_dict: "{{ wordpress_sites }}"
