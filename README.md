@@ -6,12 +6,12 @@ From your project directory
 
 1) Clone this repository
 ````{r, engine='bash', count_lines}
-git clone --depth=1 git@github.com:MWDelaney/trellis-backup.git trellis/roles/backup
+git clone --depth=1 git@github.com:MWDelaney/trellis-backup.git trellis/roles/backup && rm -rf trellis/roles/backup/.git
 ````
 
 2) Clone Stouts.backup
 ````{r, engine='bash', count_lines}
-git clone --depth=1 git@github.com:Stouts/Stouts.backup.git trellis/roles/Stouts.backup
+git clone --depth=1 git@github.com:Stouts/Stouts.backup.git trellis/roles/Stouts.backup && rm -rf trellis/roles/Stouts.backup/.git
 ````
 
 3) Add `trellis-backup` and `Stouts.backup` to server.yml:
