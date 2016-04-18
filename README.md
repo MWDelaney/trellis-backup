@@ -19,7 +19,7 @@ git clone --depth=1 git@github.com:Stouts/Stouts.backup.git trellis/roles/Stouts
 - name: Set up backups
   hosts: web:&{{ env }}
   roles:
-    - { role: backups, tags: [backup] }
+    - { role: backup, tags: [backup] }
     - { role: Stouts.backup, tags: [backup] }
 ````
 
