@@ -7,14 +7,14 @@
   
   # Purge uploads backups
 - name: Create uploads purge job
-  cron: name="Purge old uploads backups" minute="0" hour="1"    # At 1am every day
+  cron: name="Purge old uploads backups" minute="0" hour="1"
         cron_file=purge
         user="{{ admin_user }}" job="duply /etc/duply/{{ item.key }}_uploads purge"
   with_dict: "{{ wordpress_sites }}"
   
   # Purge database backups
 - name: Create database purge job
-  cron: name="Purge old database backups" minute="0" hour="2"   # At 2am every day
+  cron: name="Purge old database backups" minute="0" hour="2"
         cron_file=purge
         user="{{ admin_user }}" job="duply /etc/duply/{{ item.key }}_database purge"  
   with_dict: "{{ wordpress_sites }}"
